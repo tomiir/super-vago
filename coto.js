@@ -22,39 +22,34 @@ const getCotoInfo = async () => {
 
 
   // codigo para una pag, mover
-  const pageProducts = $('[id^="li_prod"]');
-  const productSKUs = Object.values(pageProducts)
-    .map((product, index) => index < PRODS_PER_PAGE
-      ? product.attribs.id
-      : null)
-    .filter(e => !!e)
-    .map(id => id.replace('li_prod', ''));
-
-  const products = {};
-  const getPrice = sku =>  ($(`#divProductAddCart_sku${sku} > div.info_discount > span.atg_store_productPrice > span.atg_store_newPrice`).text() || $(`#divProductAddCart_sku${sku}`).text()).match(/(\$\d?\.?\d+\,?\d{1,2})/g)[0];
-  const getDescription = sku => $(`#descrip_full_sku${sku}`).text();
-  productSKUs.forEach(sku => {
-      const product = {
-        price: getPrice(sku),
-        sku,
-        description: getDescription(sku)
-      }
-      products[sku] = product;
-    });
-  console.log(products);
+  
   
   // Buscar todos los skus
   for (i = 2; i <= numberOfPages; i++) {
-    // response = await requestCotoData(i);
-    // $ = cheerio.load(response.data);
+    response = await requestCotoData(i);
+    $ = cheerio.load(response.data);
 
-  }
-  // Por cada SKU:
-  // Buscar '#divProductAddCart_sku${sku}' para el precio
-  // Buscar '#descrip_container_sku${00463629}
-
-
-  // console.log($('.atg_store_productPrice').text());
+    const pageProducts = $('[id^="li_prod"]');
+    const productSKUs = Object.values(pageProducts)
+      .map((product, index) => index < PRODS_PER_PAGE
+        ? product.attribs.id
+        : null)
+      .filter(e => !!e)
+      .map(id => id.replace('li_prod', ''));
+  
+    const products = {};
+    const getPrice = sku =>  ($(`#divProductAddCart_sku${sku} > div.info_discount > span.atg_store_productPrice > span.atg_store_newPrice`).text() || $(`#divProductAddCart_sku${sku}`).text()).match(/(\$\d?\.?\d+\,?\d{1,2})/g)[0];
+    const getDescription = sku => $(`#descrip_full_sku${sku}`).text();
+    productSKUs.forEach(sku => {
+        const product = {
+          sku,
+          price: getPrice(sku),
+          description: getDescription(sku)
+        }
+        products[sku] = product;
+      });
+    }
+    console.log(products.length);
 }
 
 getCotoInfo();
