@@ -30,10 +30,18 @@ const getCotoInfo = async () => {
     .filter(e => !!e)
     .map(id => id.replace('li_prod', ''));
 
-  const getPrice = sku =>  $(`#divProductAddCart_sku${sku} > div.info_discount > span.atg_store_productPrice > span.atg_store_newPrice`).text() || $(`#divProductAddCart_sku${sku}`).text();
-  const priceComponents = productSKUs.map(sku => getPrice(sku));
-  const prices = Object.values(priceComponents).map(price => price.match(/(\$\d?\.?\d+\,?\d{1,2})/g)[0]);
-  console.log(prices);
+  const products = {};
+  const getPrice = sku =>  ($(`#divProductAddCart_sku${sku} > div.info_discount > span.atg_store_productPrice > span.atg_store_newPrice`).text() || $(`#divProductAddCart_sku${sku}`).text()).match(/(\$\d?\.?\d+\,?\d{1,2})/g)[0];
+  const getDescription = sku => $(`#descrip_full_sku${sku}`).text();
+  productSKUs.forEach(sku => {
+      const product = {
+        price: getPrice(sku),
+        sku,
+        description: getDescription(sku)
+      }
+      products[sku] = product;
+    });
+  console.log(products);
   
   // Buscar todos los skus
   for (i = 2; i <= numberOfPages; i++) {
