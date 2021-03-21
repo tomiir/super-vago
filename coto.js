@@ -12,6 +12,7 @@ const getPageOffset = pageNumber => (pageNumber - 1) * 24;
 const requestCotoData = pageNumber => api.get(`browse?Dy=1&Nf=product.endDate%7CGTEQ+1.6162848E12%7C%7Cproduct.startDate%7CLTEQ+1.6162848E12&No=${getPageOffset(pageNumber)}&Nr=AND%28product.language%3Aespa%C3%B1ol%2Cproduct.sDisp_200%3A1004%2Cproduct.siteId%3ACotoDigital%2COR%28product.siteId%3ACotoDigital%29%29&Nrpp=24&Nty=1&_D%3AidSucursal=+&_D%3AsiteScope=+&atg_store_searchInput=todo&idSucursal=200&siteScope=ok`);
 
 const getCotoInfo = async () => {
+  console.log('Empezando extraccion de datos, este proceso puede durar al rededor de 1hs.');
   // Buscar html pagina 1
   let response = await requestCotoData(1);
   let $ = cheerio.load(response.data);
@@ -24,7 +25,7 @@ const getCotoInfo = async () => {
   // codigo para una pag, mover
   
   
-  // Buscar todos los skus
+  // Buscar todos los skus de cada producto y luego descripcion y precio de los mismos.
   for (i = 2; i <= numberOfPages; i++) {
     response = await requestCotoData(i);
     $ = cheerio.load(response.data);
@@ -52,4 +53,7 @@ const getCotoInfo = async () => {
     console.log(products.length);
 }
 
-getCotoInfo();
+module.exports = getCotoInfo;
+
+// Allow use of default import syntax in TypeScript
+module.exports.default = getCotoInfo;
