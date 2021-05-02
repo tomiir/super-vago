@@ -42,7 +42,7 @@ const getCotoInfo = async () => {
 
   let countOfProducts = 0;
 
-  const products = {};
+  const products = [];
   // Buscar todos los skus de cada producto y luego descripcion y precio de los mismos.
   for (i = 2; i <= numberOfPages; i++) {
     response = await requestCotoData(i);
@@ -64,11 +64,11 @@ const getCotoInfo = async () => {
           price: getPrice(sku),
           description: getDescription(sku)
         }
-        products[sku] = product;
-        countOfProducts = countOfProducts + 1;
-        progressBar.update(countOfProducts);
+        products.push(product);
+        progressBar.update(products.length);
       });
     }
+    console.log(products);
     csvWriter
       .writeRecords(products)
       .then(()=> {
