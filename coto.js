@@ -1,6 +1,7 @@
 const axios = require('axios').default;
 const cheerio = require('cheerio')
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+const cliProgress = require('cli-progress');
 
 
 const PRODS_PER_PAGE = 24;
@@ -15,6 +16,7 @@ const requestCotoData = pageNumber => api.get(`browse?Dy=1&Nf=product.endDate%7C
 
 const getCotoInfo = async () => {
   console.log('Empezando extraccion de datos, este proceso puede durar al rededor de 1hs.');
+  const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
   // Buscar html pagina 1
   let response = await requestCotoData(1);
   let $ = cheerio.load(response.data);
@@ -30,10 +32,13 @@ const getCotoInfo = async () => {
   // Nro de paginas
   const totalProducts = $('#resultsCount').text();
   console.log('Total de productos a obtener: ', totalProducts);
+  progressBar.start(totalProducts, 0);
   const numberOfPages = Math.ceil(totalProducts / PRODS_PER_PAGE);
 
   // codigo para una pag, mover
-  
+
+  let countOfProducts = 0;
+
   // Buscar todos los skus de cada producto y luego descripcion y precio de los mismos.
   for (i = 2; i <= numberOfPages; i++) {
     response = await requestCotoData(i);
@@ -57,15 +62,21 @@ const getCotoInfo = async () => {
           description: getDescription(sku)
         }
         products[sku] = product;
+        countOfProducts = countOfProducts + 1;
+        progressBar.update(countOfProducts);
       });
     }
     console.log(products.length);
     csvWriter
       .writeRecords(products)
-      .then(()=> console.log('El archivo ha sido creado con exito.'));
+      .then(()=> {
+        bar1.stop();
+        console.log('El archivo ha sido creado con exito.');
+      });
 }
 
 module.exports = getCotoInfo;
 
 // Allow use of default import syntax in TypeScript
 module.exports.default = getCotoInfo;
+

@@ -2,6 +2,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "cheerio": "^1.0.0-rc.6",
+    "cli-progress": "^3.9.0",
     "csv-writer": "^1.6.0"
   }
 }
