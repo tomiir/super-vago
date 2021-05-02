@@ -21,7 +21,6 @@ const getCotoInfo = async () => {
   const totalProducts = $('#resultsCount').text();
   const numberOfPages = Math.ceil(totalProducts / PRODS_PER_PAGE);
 
-
   // codigo para una pag, mover
   
   
@@ -39,7 +38,7 @@ const getCotoInfo = async () => {
       .map(id => id.replace('li_prod', ''));
   
     const products = {};
-    const getPrice = sku =>  ($(`#divProductAddCart_sku${sku} > div.info_discount > span.atg_store_productPrice > span.atg_store_newPrice`).text() || $(`#divProductAddCart_sku${sku}`).text()).match(/(\$\d?\.?\d+\,?\d{1,2})/g)[0];
+    const getPrice = sku =>  ($(`#divProductAddCart_sku${sku} > div.info_discount > span.atg_store_productPrice > span.atg_store_newPrice`).text() || $(`#divProductAddCart_sku${sku}`).text()).match(/(\$\d?\.?\d+\,?\d{1,2})/g)?.[0];
     const getDescription = sku => $(`#descrip_full_sku${sku}`).text();
     productSKUs.forEach(sku => {
         const product = {
