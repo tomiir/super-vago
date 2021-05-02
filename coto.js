@@ -39,9 +39,6 @@ const getCotoInfo = async () => {
   const numberOfPages = Math.ceil(totalProducts / PRODS_PER_PAGE);
 
   // codigo para una pag, mover
-
-  let countOfProducts = 0;
-
   const products = [];
   // Buscar todos los skus de cada producto y luego descripcion y precio de los mismos.
   for (i = 2; i <= numberOfPages; i++) {
