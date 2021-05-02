@@ -15,13 +15,16 @@ const getPageOffset = pageNumber => (pageNumber - 1) * 24;
 const requestCotoData = pageNumber => api.get(`browse?Dy=1&Nf=product.endDate%7CGTEQ+1.6162848E12%7C%7Cproduct.startDate%7CLTEQ+1.6162848E12&No=${getPageOffset(pageNumber)}&Nr=AND%28product.language%3Aespa%C3%B1ol%2Cproduct.sDisp_200%3A1004%2Cproduct.siteId%3ACotoDigital%2COR%28product.siteId%3ACotoDigital%29%29&Nrpp=24&Nty=1&_D%3AidSucursal=+&_D%3AsiteScope=+&atg_store_searchInput=todo&idSucursal=200&siteScope=ok`);
 
 const getCotoInfo = async () => {
-  console.log('Empezando extraccion de datos, este proceso puede durar al rededor de 1hs.');
+  console.log('Empezando extraccion de datos...');
   const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
   // Buscar html pagina 1
   let response = await requestCotoData(1);
   let $ = cheerio.load(response.data);
+  const date = new Date();
+  const formatedDate = date.getDate() + "-"+ date.getMonth()+ "-" + date.getFullYear();
+  const fileName = `Listado Coto [${formatedDate}].csv`;
   const csvWriter = createCsvWriter({
-    path: 'Listado Coto - {fecha}.csv', //Agregar fecha
+    path: fileName,
     header: [
       {id: 'sku', title: 'SKU'},
       {id: 'description', title: 'Descripción del prodcuto'},
@@ -70,8 +73,8 @@ const getCotoInfo = async () => {
     csvWriter
       .writeRecords(products)
       .then(()=> {
-        bar1.stop();
-        console.log('El archivo ha sido creado con exito.');
+        progressBar.stop();
+        console.log(`El archivo ha sido creado con exito\nNombre del archivo: ${fileName}`);
       });
 }
 
