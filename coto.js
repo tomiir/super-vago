@@ -15,7 +15,7 @@ const getPageOffset = pageNumber => (pageNumber - 1) * 24;
 const requestCotoData = pageNumber => api.get(`browse?Dy=1&Nf=product.endDate%7CGTEQ+1.6162848E12%7C%7Cproduct.startDate%7CLTEQ+1.6162848E12&No=${getPageOffset(pageNumber)}&Nr=AND%28product.language%3Aespa%C3%B1ol%2Cproduct.sDisp_200%3A1004%2Cproduct.siteId%3ACotoDigital%2COR%28product.siteId%3ACotoDigital%29%29&Nrpp=24&Nty=1&_D%3AidSucursal=+&_D%3AsiteScope=+&atg_store_searchInput=todo&idSucursal=200&siteScope=ok`);
 
 const getCotoInfo = async () => {
-  console.log('Empezando extraccion de datos...');
+  console.log('Empezando extraccion de datos...\n');
   const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
   // Buscar html pagina 1
   let response = await requestCotoData(1);
@@ -34,7 +34,7 @@ const getCotoInfo = async () => {
 
   // Nro de paginas
   const totalProducts = $('#resultsCount').text();
-  console.log('Total de productos a obtener: ', totalProducts);
+  console.log(`Total de productos a obtener: ${totalProducts}\n`);
   progressBar.start(totalProducts, 0);
   const numberOfPages = Math.ceil(totalProducts / PRODS_PER_PAGE);
 
@@ -74,7 +74,8 @@ const getCotoInfo = async () => {
       .writeRecords(products)
       .then(()=> {
         progressBar.stop();
-        console.log(`El archivo ha sido creado con exito\nNombre del archivo: ${fileName}`);
+        console.clear();
+        console.log('\x1b[32m%s\x1b[0m', `El archivo ha sido creado con exito\nNombre del archivo: ${fileName}\n`);
       });
 }
 
