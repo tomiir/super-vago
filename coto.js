@@ -42,22 +42,22 @@ const getCotoInfo = async () => {
 
   let countOfProducts = 0;
 
+  const products = {};
   // Buscar todos los skus de cada producto y luego descripcion y precio de los mismos.
   for (i = 2; i <= numberOfPages; i++) {
     response = await requestCotoData(i);
     $ = cheerio.load(response.data);
 
-    const pageProducts = $('[id^="li_prod"]');
+    const pageProducts = $('[id^="li_prod"]') || {};
     const productSKUs = Object.values(pageProducts)
       .map((product, index) => index < PRODS_PER_PAGE
-        ? product.attribs.id
+        ? product?.attribs?.id
         : null)
       .filter(e => !!e)
-      .map(id => id.replace('li_prod', ''));
+      .map(id => id?.replace('li_prod', ''));
   
-    const products = {};
     const getPrice = sku =>  ($(`#divProductAddCart_sku${sku} > div.info_discount > span.atg_store_productPrice > span.atg_store_newPrice`).text() || $(`#divProductAddCart_sku${sku}`).text()).match(/(\$\d?\.?\d+\,?\d{1,2})/g)?.[0];
-    const getDescription = sku => $(`#descrip_full_sku${sku}`).text();
+    const getDescription = sku => $(`#descrip_full_sku${sku}`)?.text();
     productSKUs.forEach(sku => {
         const product = {
           sku,
@@ -69,7 +69,6 @@ const getCotoInfo = async () => {
         progressBar.update(countOfProducts);
       });
     }
-    console.log(products.length);
     csvWriter
       .writeRecords(products)
       .then(()=> {
