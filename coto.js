@@ -27,7 +27,7 @@ const getCotoInfo = async () => {
     path: fileName,
     header: [
       {id: 'sku', title: 'SKU'},
-      {id: 'description', title: 'Descripción del prodcuto'},
+      {id: 'description', title: 'Descripción del producto'},
       {id: 'price', title: 'Precio en $'},
     ]
   });
