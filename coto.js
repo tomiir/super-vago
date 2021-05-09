@@ -3,7 +3,6 @@ const cheerio = require('cheerio')
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const cliProgress = require('cli-progress');
 
-
 const PRODS_PER_PAGE = 24;
 const api = axios.create({
   baseURL: 'https://www.cotodigital3.com.ar/sitios/cdigi/',
@@ -37,11 +36,14 @@ const getCotoInfo = async () => {
   console.log(`Total de productos a obtener: ${totalProducts}\n`);
   progressBar.start(totalProducts, 0);
   const numberOfPages = Math.ceil(totalProducts / PRODS_PER_PAGE);
+  // Uncomment if needed
+  // const numberOfPages = 5;
 
   // codigo para una pag, mover
   const products = [];
   // Buscar todos los skus de cada producto y luego descripcion y precio de los mismos.
   for (i = 2; i <= numberOfPages; i++) {
+    try {
     response = await requestCotoData(i);
     $ = cheerio.load(response.data);
 
@@ -64,7 +66,10 @@ const getCotoInfo = async () => {
         products.push(product);
         progressBar.update(products.length);
       });
+    } catch {
+      console.log('\x1b[32m%s\x1b[0m','Hubo un error de ejecucion, vuelva a intentarlo');
     }
+  }
     console.log(products);
     csvWriter
       .writeRecords(products)
@@ -73,6 +78,7 @@ const getCotoInfo = async () => {
         console.clear();
         console.log('\x1b[32m%s\x1b[0m', `El archivo ha sido creado con exito\nNombre del archivo: ${fileName}\n`);
       });
+      
 }
 
 module.exports = getCotoInfo;

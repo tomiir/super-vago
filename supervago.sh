@@ -1,2 +1,2 @@
 #! /bin/bash
-node scraper.js
+node bin.js
